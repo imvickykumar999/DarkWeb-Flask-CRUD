@@ -3,3 +3,4 @@
 HiddenServiceDir/hs_ed25519_public_key
 HiddenServiceDir/hs_ed25519_secret_key
 *.pyc
+static/uploads/
