@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Uploaded Media</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Media</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in media %}
+            <tr>
+                <td><a href="{{ url_for('view_media', id=item.id) }}">{{ item.title }}</a></td>
+                <td>
+                    {% if item.media_type == 'photo' %}
+                        <img src="{{ url_for('static', filename='uploads/' ~ item.filename) }}" width="150px">
+                    {% elif item.media_type == 'video' %}
+                        <video width="150" controls>
+                            <source src="{{ url_for('static', filename='uploads/' ~ item.filename) }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('update', id=item.id) }}" class="edit-btn">Edit</a>
+                    <a href="{{ url_for('delete', id=item.id) }}" onclick="return confirmDelete();" class="delete-btn">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    function confirmDelete() {
+        return confirm('Are you sure you want to delete this item?');
+    }
+</script>
+{% endblock %}
