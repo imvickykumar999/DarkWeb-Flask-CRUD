@@ -2,17 +2,23 @@
 
 {% block content %}
 <h1>{{ media_item.title }}</h1>
-<p>{{ media_item.description | safe }}</p>
 
 <div style="text-align: center;">
     {% if media_item.media_type == 'photo' %}
-        <img src="{{ url_for('static', filename='uploads/' ~ media_item.filename) }}" style="max-width: 100%;" alt="Photo">
+    <img src="{{ url_for('static', filename='uploads/' ~ media_item.filename) }}" style="max-width: 100%;" alt="Photo">
     {% elif media_item.media_type == 'video' %}
-        <video width="400" controls style="max-width: 100%;">
-            <source src="{{ url_for('static', filename='uploads/' ~ media_item.filename) }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+    <video width="400" controls style="max-width: 100%;">
+        <source src="{{ url_for('static', filename='uploads/' ~ media_item.filename) }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    {% else %}
+    <audio controls style="max-width: 100%;">
+        <source src="{{ url_for('static', filename='uploads/' ~ media_item.filename) }}" type="audio/mpeg">
+        Your browser does not support the audio tag.
+    </audio>
     {% endif %}
 </div>
 
+<br>
+<p>{{ media_item.description | safe }}</p>
 {% endblock %}
