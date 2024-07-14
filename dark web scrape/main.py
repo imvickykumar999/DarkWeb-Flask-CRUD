@@ -3,7 +3,8 @@ from bs4 import BeautifulSoup
 import os
 
 requests = RequestsTor(tor_ports=(9050,), tor_cport=9051)
-url = 'http://7ravv2cin5iyoyszsg6sobpp4jsgtyp5r5tpacmuyvadjjyhdwjzgxyd.onion/'
+# url = 'http://7ravv2cin5iyoyszsg6sobpp4jsgtyp5r5tpacmuyvadjjyhdwjzgxyd.onion/' # crud website
+url = 'http://p53lf57qovyuvwsc6xnrppyply3vtqm7l6pcobkmyqsiofyeznfu5uqd.onion/' # news website
 
 def fetch_and_save(url, session, folder='resources'):
     response = session.get(url)
