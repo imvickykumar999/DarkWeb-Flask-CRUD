@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 
-from HostTor import VicksTor
+# from HostTor import VicksTor
 import VicksTor as vix
 vix.run_server('flask')
 

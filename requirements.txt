@@ -3,3 +3,4 @@ VicksTor
 requests
 flask
 Flask-SQLAlchemy
+requests_tor
