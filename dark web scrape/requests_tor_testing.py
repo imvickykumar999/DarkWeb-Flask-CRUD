@@ -3,7 +3,7 @@ from requests_tor import RequestsTor
 
 # Initialize the RequestsTor object
 requests = RequestsTor(tor_ports=(9050,), tor_cport=9051)
-url = 'http://7ravv2cin5iyoyszsg6sobpp4jsgtyp5r5tpacmuyvadjjyhdwjzgxyd.onion/'
+url = 'http://hfy4jopevfq56qghqgr5qs3j7e5qhn6lr7un45aymqv6sq6siie6kkid.onion/'
 
 # Make a GET request through Tor
 r = requests.get(url)
