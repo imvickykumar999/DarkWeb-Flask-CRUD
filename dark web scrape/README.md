@@ -124,3 +124,86 @@ except Exception as e:
 ### Conclusion
 
 By following these steps and ensuring that both Tor services are running correctly on both laptops, you should be able to route requests through the Tor network to access the hidden service. If you continue to face issues, please provide more details about the configurations and any error messages you encounter for further assistance.
+
+---
+
+When fetching a webpage using requests (or any HTTP library), only the HTML content of the page is fetched by default. The additional resources like CSS, JavaScript, images, etc., are not fetched automatically. If you need the complete rendered content, including CSS, you will need to fetch and process these additional resources manually.
+
+Here's a more comprehensive way to handle this:
+
+1. **Fetch the HTML content.**
+2. **Parse the HTML to extract URLs for CSS and other resources.**
+3. **Fetch these resources and integrate them into the HTML.**
+
+This process can be quite complex if done manually, so using a library like `BeautifulSoup` for parsing HTML and `requests` for fetching additional resources can be very helpful. Here's an example of how you might do this:
+
+### Example Code
+
+1. **Install necessary libraries:**
+   ```bash
+   pip install requests_tor beautifulsoup4
+   ```
+
+2. **Fetch and process the webpage:**
+   ```python
+   from requests_tor import RequestsTor
+   from bs4 import BeautifulSoup
+   import os
+
+   requests = RequestsTor(tor_ports=(9050,), tor_cport=9051)
+   url = 'http://7ravv2cin5iyoyszsg6sobpp4jsgtyp5r5tpacmuyvadjjyhdwjzgxyd.onion/'
+
+   def fetch_and_save(url, session, folder='resources'):
+       response = session.get(url)
+       if not os.path.exists(folder):
+           os.makedirs(folder)
+       file_path = os.path.join(folder, os.path.basename(url))
+       with open(file_path, 'wb') as f:
+           f.write(response.content)
+       return file_path
+
+   def fetch_page(url):
+       response = requests.get(url)
+       if response.status_code == 200:
+           soup = BeautifulSoup(response.text, 'html.parser')
+           
+           # Process and save CSS files
+           for link in soup.find_all('link', rel='stylesheet'):
+               css_url = link.get('href')
+               if css_url.startswith('http'):
+                   css_file = fetch_and_save(css_url, requests)
+                   link['href'] = css_file
+               elif css_url.startswith('/'):
+                   css_file = fetch_and_save(url + css_url, requests)
+                   link['href'] = css_file
+
+           # Process and save JS files
+           for script in soup.find_all('script', src=True):
+               js_url = script.get('src')
+               if js_url.startswith('http'):
+                   js_file = fetch_and_save(js_url, requests)
+                   script['src'] = js_file
+               elif js_url.startswith('/'):
+                   js_file = fetch_and_save(url + js_url, requests)
+                   script['src'] = js_file
+
+           # Save the modified HTML
+           with open('output.html', 'w', encoding='utf-8') as file:
+               file.write(str(soup))
+
+           print("Page and resources saved successfully.")
+       else:
+           print(f"Failed to fetch the page. Status code: {response.status_code}")
+
+   fetch_page(url)
+   ```
+
+### Explanation
+
+1. **`fetch_and_save` function:** This function fetches a resource and saves it to a specified folder. The resource could be a CSS file, JavaScript file, image, etc.
+2. **`fetch_page` function:** This function fetches the main HTML page and then uses BeautifulSoup to parse it. It looks for CSS and JavaScript files and fetches them using the `fetch_and_save` function. The HTML is then modified to reference the local copies of these files.
+3. **Save the modified HTML:** The modified HTML with local references to CSS and JavaScript files is saved to an output file.
+
+This example assumes that CSS and JS files are accessible via direct URLs. If they are not, or if there are other complexities (like relative paths), additional handling will be required. 
+
+This approach ensures that all resources are fetched and saved locally, allowing the HTML to be rendered correctly with all styles and scripts in place.
