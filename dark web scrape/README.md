@@ -1,5 +1,7 @@
 # **Ensure `Tor` is Running on Both Laptops:**
 
+![image](https://github.com/user-attachments/assets/e2423551-e000-4d50-b946-b2fe7dc5dc93)
+
 It looks like your `torrc` configuration file is set up to handle some Tor-related tasks, but it does not include the necessary SOCKS and Control ports configuration. You need to ensure that the Tor service is configured to listen on the correct ports. 
 
 Here are the steps to modify your `torrc` file:
