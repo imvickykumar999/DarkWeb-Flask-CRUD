@@ -25,6 +25,10 @@ nav ul {
     display: flex; /* Ensure list items are displayed in a row */
 }
 
+nav ul li:last-child {
+    margin-left: auto;
+}
+
 nav ul li {
     margin-right: 20px;
 }
