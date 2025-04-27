@@ -4,3 +4,5 @@ requests
 flask
 Flask-SQLAlchemy
 requests_tor
+selenium
+requests[socks]
