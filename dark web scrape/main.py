@@ -1,51 +1,28 @@
 from requests_tor import RequestsTor
 from bs4 import BeautifulSoup
-import os
+import time
 
 requests = RequestsTor(tor_ports=(9050,), tor_cport=9051)
-# url = 'http://7ravv2cin5iyoyszsg6sobpp4jsgtyp5r5tpacmuyvadjjyhdwjzgxyd.onion/' # crud website
-url = 'http://p53lf57qovyuvwsc6xnrppyply3vtqm7l6pcobkmyqsiofyeznfu5uqd.onion/' # news website
 
-def fetch_and_save(url, session, folder='resources'):
-    response = session.get(url)
-    if not os.path.exists(folder):
-        os.makedirs(folder)
-    file_path = os.path.join(folder, os.path.basename(url))
-    with open(file_path, 'wb') as f:
-        f.write(response.content)
-    return file_path
+sitemap_url = 'http://imvickyp2zrsxzfrc7crjeyak6jvvlcgury25qbkzojgjdacsifhz5qd.onion/sitemap.xml'
 
-def fetch_page(url):
-    response = requests.get(url)
+def visit_sitemap_links(sitemap_url):
+    response = requests.get(sitemap_url)
     if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Process and save CSS files
-        for link in soup.find_all('link', rel='stylesheet'):
-            css_url = link.get('href')
-            if css_url.startswith('http'):
-                css_file = fetch_and_save(css_url, requests)
-                link['href'] = css_file
-            elif css_url.startswith('/'):
-                css_file = fetch_and_save(url + css_url, requests)
-                link['href'] = css_file
+        soup = BeautifulSoup(response.content, 'xml')
+        urls = [loc.text.replace("https://", "http://") for loc in soup.find_all('loc')]
 
-        # Process and save JS files
-        for script in soup.find_all('script', src=True):
-            js_url = script.get('src')
-            if js_url.startswith('http'):
-                js_file = fetch_and_save(js_url, requests)
-                script['src'] = js_file
-            elif js_url.startswith('/'):
-                js_file = fetch_and_save(url + js_url, requests)
-                script['src'] = js_file
+        print(f"Found {len(urls)} URLs in sitemap.\n")
 
-        # Save the modified HTML
-        with open('output.html', 'w', encoding='utf-8') as file:
-            file.write(str(soup))
-
-        print("Page and resources saved successfully.")
+        for i, url in enumerate(urls, 1):
+            try:
+                page = requests.get(url)
+                print(f"{i}. {url} -> Status: {page.status_code}")
+                time.sleep(1)  # Optional delay
+            except Exception as e:
+                print(f"{i}. Failed to fetch {url}: {e}")
     else:
-        print(f"Failed to fetch the page. Status code: {response.status_code}")
+        print(f"Failed to fetch sitemap. Status code: {response.status_code}")
 
-fetch_page(url)
+# Run
+visit_sitemap_links(sitemap_url)
